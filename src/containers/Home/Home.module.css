@@ -1,0 +1,14 @@
+.home {
+    display: flex;
+    margin-top: 100px;
+    text-align: left;
+    justify-content: center;
+}
+
+.date-picker{
+    margin-right: 10px;   
+}
+
+.date-pick-row {
+    width: 80%;
+}
