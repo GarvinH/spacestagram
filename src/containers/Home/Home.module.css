@@ -1,14 +1,51 @@
 .home {
-    display: flex;
-    margin-top: 100px;
-    text-align: left;
-    justify-content: center;
+  display: flex;
+  padding-top: 100px;
+  text-align: left;
+  align-items: center;
+  flex-direction: column;
 }
 
-.date-picker{
-    margin-right: 10px;   
+.date-picker {
+  flex-direction: column;
 }
 
 .date-pick-row {
-    width: 80%;
+  width: 80%;
+  justify-content: center;
+}
+
+.post-list {
+    margin-top: 30px;
+    width: 50%
+}
+
+.search-button {
+    align-self: center;
+}
+
+@media(max-width: 991.98px) {
+    .post-list {
+        width: 80%;
+    }
+    
+    .date-pick-row {
+        text-align: center;
+    }
+
+    .search-button {
+        margin-top: 20px;
+    }
+}
+
+@media(min-width: 992px) {
+    .search-button {
+        text-align: right;
+    }
+}
+
+@media(max-width: 767.98px) {
+    .post-list {
+        width: 100%;
+    }
 }

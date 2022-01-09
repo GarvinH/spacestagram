@@ -17,9 +17,11 @@ export const DatePickerWrapper: FunctionComponent<DatePickerWrapperProps> = ({
   return (
     <span>
       <span>{text}:</span>
-      <div style={{ display: "inline-block", marginLeft: "5px" }}>
-        <DatePicker selected={selected} onChange={onChange} maxDate={new Date()}/>
-      </div>
+      <DatePicker
+        selected={selected}
+        onChange={onChange}
+        maxDate={new Date()}
+      />
     </span>
   );
 };

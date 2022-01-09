@@ -1,0 +1,12 @@
+.post {
+    border: 1px rgba(0,0,0,0.25) solid;
+    border-radius: 2px;
+}
+
+.post h4, .post p, .post small {
+    padding: 0 10px;
+}
+
+.post h4, .post p {
+    padding-top: 10px;
+}
