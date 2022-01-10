@@ -2,14 +2,17 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 
 import styles from "./Home.module.css";
 
 import { DatePickerWrapper } from "../../components/DatePickerWrapper/DatePickerWrapper";
-import { Post } from "../../components/Post/Post";
+import { Post, PostProps } from "../../components/Post/Post";
 
-const data = {
+import { data } from "./data";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+const datum = {
   date: "2022-01-09",
   explanation:
     "What will become of Jupiter's Great Red Spot?  Gas giant Jupiter is the solar system's largest world with about 320 times the mass of planet Earth. Jupiter is home to one of the largest and longest lasting storm systems known, the Great Red Spot (GRS), visible to the left. The GRS is so large it could swallow Earth, although it has been shrinking.  Comparison with historical notes indicate that the storm spans only about one third of the exposed surface area it had 150 years ago. NASA's Outer Planets Atmospheres Legacy (OPAL) program has been monitoring the storm more recently using the Hubble Space Telescope. The featured Hubble OPAL image shows Jupiter as it appeared in 2016, processed in a way that makes red hues appear quite vibrant. Modern GRS data indicate that the storm continues to constrict its surface area, but is also becoming slightly taller, vertically.  No one knows the future of the GRS, including the possibility that if the shrinking trend continues, the GRS might one day even do what smaller spots on Jupiter have done -- disappear completely.    Tuesday over Zoom: APOD editor to present the Best APOD Space Images of 2021",
@@ -24,6 +27,35 @@ const data = {
 export const Home: FunctionComponent = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [posts, setPosts] = useState<PostProps[]>([]);
+
+  // related to rendering of posts
+  const [count, setCount] = useState({ prev: 0, next: 5 }); //used for slicing
+  const [hasMore, setHasMore] = useState(true);
+  const [renderedPosts, setRenderedPosts] = useState<PostProps[]>([]);
+  const fetchMoreData = () => {
+    if (renderedPosts.length === posts.length) {
+      setHasMore(false);
+      return;
+    }
+    setRenderedPosts([
+      ...renderedPosts,
+      ...posts.slice(count.prev, count.next),
+    ]);
+    setCount((prevState) => ({
+      prev: prevState.prev + 5,
+      next: prevState.next + 5,
+    }));
+  };
+
+  useEffect(() => {
+    setPosts(data.reverse());
+    setRenderedPosts(data.slice(count.prev, count.next));
+    setCount((prevState) => ({
+      prev: prevState.prev + 5,
+      next: prevState.next + 5,
+    }));
+  }, []);
 
   return (
     <Container className={styles.home}>
@@ -46,17 +78,25 @@ export const Home: FunctionComponent = () => {
             </Col>
           </Row>
         </Col>
-        <Col
-          xs={12}
-          lg={2}
-          className={styles["search-button"]}
-        >
+        <Col xs={12} lg={2} className={styles["search-button"]}>
           <Button variant="dark">Search</Button>
         </Col>
       </Row>
 
       <div className={styles["post-list"]}>
-        <Post {...data} />
+        <InfiniteScroll
+          dataLength={renderedPosts.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<h4>Loading...</h4>}
+        >
+          {renderedPosts?.map((post) => (
+            <div style={{marginBottom: "30px"}} key={post.date} >
+              <Post {...post} />
+            </div>
+          ))}
+        </InfiniteScroll>
+        {/* <Post {...datum} /> */}
       </div>
     </Container>
   );
