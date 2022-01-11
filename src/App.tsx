@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { Nav } from "./containers/Nav/Nav";
 import "bootstrap/dist/css/bootstrap.css";
