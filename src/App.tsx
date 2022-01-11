@@ -14,6 +14,11 @@ function App() {
       <main>
         <Home />
       </main>
+      <footer>
+        <small>
+          Brought to you by NASA's Astronomy Photo of the Day (APOD) API
+        </small>
+      </footer>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -25,6 +26,8 @@ const datum = {
   url: "https://apod.nasa.gov/apod/image/2201/JupiterOpal_HubbleMasztalerz_960.jpg",
 };
 
+const convertDate = (date: Date) => date.toISOString().substring(0, 10);
+
 export const Home: FunctionComponent = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -50,13 +53,36 @@ export const Home: FunctionComponent = () => {
     }));
   };
 
+  const updatePosts = (newPosts: PostProps[]) => {
+    setPosts(newPosts.reverse());
+    setHasMore(true);
+    setRenderedPosts(newPosts.slice(0, 5));
+    setCount({
+      prev: 5,
+      next: 10,
+    });
+  };
+
+  const onSearch = () => {
+    if (startDate && endDate) {
+      axios
+        .get(
+          `/apod?start_date=${convertDate(startDate)}&end_date=${convertDate(
+            endDate
+          )}`
+        )
+        .then((resp) => updatePosts(resp.data));
+    } else if (startDate) {
+      axios
+        .get(`/apod?start_date=${convertDate(startDate)}`)
+        .then((resp) => updatePosts(resp.data));
+    } else {
+      axios.get(`/apod`).then((resp) => updatePosts([resp.data]));
+    }
+  };
+
   useEffect(() => {
-    setPosts(data.reverse());
-    setRenderedPosts(data.slice(count.prev, count.next));
-    setCount((prevState) => ({
-      prev: prevState.prev + 5,
-      next: prevState.next + 5,
-    }));
+    onSearch();
   }, []);
 
   return (
@@ -81,7 +107,9 @@ export const Home: FunctionComponent = () => {
           </Row>
         </Col>
         <Col xs={12} lg={2} className={styles["search-button"]}>
-          <Button variant="dark">Search</Button>
+          <Button variant="dark" onClick={onSearch}>
+            Search
+          </Button>
         </Col>
       </Row>
 
@@ -90,7 +118,7 @@ export const Home: FunctionComponent = () => {
           dataLength={renderedPosts.length}
           next={fetchMoreData}
           hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
+          loader={<h4 style={{ textAlign: "center" }}>Loading...</h4>}
         >
           {renderedPosts?.map((post) => (
             <div style={{ marginBottom: "30px" }} key={post.date}>

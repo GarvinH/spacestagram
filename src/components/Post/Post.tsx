@@ -10,6 +10,7 @@ export interface PostProps {
   url: string;
   media_type: string;
   post_buttons?: React.ReactNode[];
+  copyright?: string;
 }
 
 export const Post: FunctionComponent<PostProps> = ({
@@ -19,6 +20,7 @@ export const Post: FunctionComponent<PostProps> = ({
   url,
   media_type,
   post_buttons,
+  copyright,
 }: PostProps) => {
   return (
     <div className={styles.post}>
@@ -28,6 +30,11 @@ export const Post: FunctionComponent<PostProps> = ({
           <img src={url} style={{ width: "100%" }} alt="" aria-hidden />
         ) : (
           <VideoEmbedded source={url} title={title} />
+        )}
+        {copyright && (
+          <div style={{ textAlign: "center" }}>
+            <small>© {copyright}</small>
+          </div>
         )}
       </div>
       {post_buttons && (
@@ -39,7 +46,7 @@ export const Post: FunctionComponent<PostProps> = ({
       )}
       <p>{explanation}</p>
       <small>
-        {new Date(date).toLocaleString("default", {
+        {new Date(date + " 00:00:00").toLocaleString("default", {
           month: "long",
           day: "numeric",
           year: "numeric",
