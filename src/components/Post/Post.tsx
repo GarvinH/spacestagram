@@ -9,6 +9,7 @@ export interface PostProps {
   explanation: string;
   url: string;
   media_type: string;
+  post_buttons?: React.ReactNode[];
 }
 
 export const Post: FunctionComponent<PostProps> = ({
@@ -17,14 +18,24 @@ export const Post: FunctionComponent<PostProps> = ({
   explanation,
   url,
   media_type,
+  post_buttons,
 }: PostProps) => {
   return (
     <div className={styles.post}>
       <h4>{title}</h4>
-      {media_type === "image" ? (
-        <img src={url} style={{ width: "100%" }} />
-      ) : (
-        <VideoEmbedded source={url} title={title} />
+      <div style={{ marginBottom: "15px" }}>
+        {media_type === "image" ? (
+          <img src={url} style={{ width: "100%" }} alt="" aria-hidden />
+        ) : (
+          <VideoEmbedded source={url} title={title} />
+        )}
+      </div>
+      {post_buttons && (
+        <div className={styles["post-button-row"]}>
+          {post_buttons.map((button, index) => (
+            <div key={date + "_" + index}>{button}</div>
+          ))}
+        </div>
       )}
       <p>{explanation}</p>
       <small>

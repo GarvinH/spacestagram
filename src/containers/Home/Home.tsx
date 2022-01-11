@@ -11,6 +11,7 @@ import { Post, PostProps } from "../../components/Post/Post";
 
 import { data } from "./data";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { IconButton } from "../../components/Buttons/IconButton/IconButton";
 
 const datum = {
   date: "2022-01-09",
@@ -28,6 +29,7 @@ export const Home: FunctionComponent = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [posts, setPosts] = useState<PostProps[]>([]);
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
 
   // related to rendering of posts
   const [count, setCount] = useState({ prev: 0, next: 5 }); //used for slicing
@@ -91,8 +93,40 @@ export const Home: FunctionComponent = () => {
           loader={<h4>Loading...</h4>}
         >
           {renderedPosts?.map((post) => (
-            <div style={{marginBottom: "30px"}} key={post.date} >
-              <Post {...post} />
+            <div style={{ marginBottom: "30px" }} key={post.date}>
+              <Post
+                {...post}
+                post_buttons={[
+                  <IconButton
+                    onClick={(event: React.MouseEvent<HTMLElement>) => {
+                      setLikedPosts((prevLikedPosts) => {
+                        const newLikedPosts = new Set(prevLikedPosts);
+                        if (prevLikedPosts.has(post.date)) {
+                          newLikedPosts.delete(post.date);
+                          return newLikedPosts;
+                        } else {
+                          newLikedPosts.add(post.date);
+                          return newLikedPosts;
+                        }
+                      });
+                    }}
+                    icon={
+                      likedPosts.has(post.date) ? (
+                        <div key={1}>
+                          <i
+                            className="fas fa-heart fa-2x"
+                            style={{ color: "red" }}
+                          />
+                        </div>
+                      ) : (
+                        <div key={2}>
+                          <i className="far fa-heart fa-2x" />
+                        </div>
+                      )
+                    }
+                  />,
+                ]}
+              />
             </div>
           ))}
         </InfiniteScroll>

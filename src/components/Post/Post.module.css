@@ -3,10 +3,14 @@
     border-radius: 2px;
 }
 
-.post h4, .post p, .post small {
+.post h4, .post p, .post small, .post .post-button-row {
     padding: 0 10px;
 }
 
-.post h4, .post p {
+.post h4 {
     padding-top: 10px;
+}
+
+.post p {
+    padding-top: 5px;
 }
