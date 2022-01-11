@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -23,6 +24,7 @@ export const Home: FunctionComponent = () => {
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
   // related to rendering of posts
   const [count, setCount] = useState({ prev: 0, next: 5 }); //used for slicing
@@ -56,21 +58,22 @@ export const Home: FunctionComponent = () => {
 
   const onSearch = () => {
     setLoading(true);
-    if (startDate && endDate) {
-      axios
-        .get(
-          `/apod?start_date=${convertDate(startDate)}&end_date=${convertDate(
-            endDate
-          )}`
-        )
-        .then((resp) => updatePosts(resp.data));
-    } else if (startDate) {
-      axios
-        .get(`/apod?start_date=${convertDate(startDate)}`)
-        .then((resp) => updatePosts(resp.data));
-    } else {
-      axios.get(`/apod`).then((resp) => updatePosts([resp.data]));
-    }
+    setError("");
+
+    const params = {
+      ...(startDate && { start_date: convertDate(startDate) }),
+      ...(startDate && endDate && { end_date: convertDate(endDate) }),
+    };
+
+    axios
+      .get("/apod", { params: params })
+      .then((resp) =>
+        updatePosts(resp.data instanceof Array ? resp.data : [resp.data])
+      )
+      .catch((err: AxiosError) => {
+        setError(err.response?.data);
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -120,6 +123,7 @@ export const Home: FunctionComponent = () => {
             color="black"
           />
         )}
+        {error && <Alert variant="danger">{error}</Alert>}
         {renderedPosts.length > 0 && (
           <InfiniteScroll
             dataLength={renderedPosts.length}
