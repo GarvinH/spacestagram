@@ -86,14 +86,21 @@ export const Home: FunctionComponent = () => {
               <DatePickerWrapper
                 text="Start Date"
                 selected={startDate}
-                onChange={(date: Date) => setStartDate(date)}
+                onChange={(date: Date) => {
+                  setStartDate(date);
+                  if (endDate && date > endDate) {
+                    setEndDate(null);
+                  }
+                }}
               />
             </Col>
             <Col lg={7} className={styles["date-picker"]}>
               <DatePickerWrapper
                 text="End Date"
                 selected={endDate}
+                disabled={startDate === null}
                 onChange={(date: Date) => setEndDate(date)}
+                minDate={startDate}
               />
             </Col>
           </Row>

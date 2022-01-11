@@ -1,25 +1,21 @@
 import { FunctionComponent } from "react";
-import DatePicker from "react-datepicker";
+import DatePicker, {ReactDatePickerProps} from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-interface DatePickerWrapperProps {
+interface DatePickerWrapperProps extends ReactDatePickerProps {
   text: string;
-  selected: Date | null;
-  onChange: (date: Date) => void;
 }
 
 export const DatePickerWrapper: FunctionComponent<DatePickerWrapperProps> = ({
   text,
-  selected,
-  onChange,
+  ...reactDatePickerProps
 }: DatePickerWrapperProps) => {
   return (
     <span>
       <span>{text}:</span>
       <DatePicker
-        selected={selected}
-        onChange={onChange}
+        {...reactDatePickerProps}
         maxDate={new Date()}
       />
     </span>
