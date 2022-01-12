@@ -71,8 +71,17 @@ export const Home: FunctionComponent = () => {
         updatePosts(resp.data instanceof Array ? resp.data : [resp.data])
       )
       .catch((err: AxiosError) => {
-        setError(err.response?.data);
-        setLoading(false);
+        axios
+          .get("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY", {
+            params: params,
+          })
+          .then((resp) =>
+            updatePosts(resp.data instanceof Array ? resp.data : [resp.data])
+          )
+          .catch((err: AxiosError) => {
+            setError("Failed to obtain pictures of the day from the NASA API. Please try again later.");
+            setLoading(false);
+          });
       });
   };
 
